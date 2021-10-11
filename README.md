@@ -36,7 +36,10 @@ Or
 
 `python3 -m http.server` 
 
-You should be able to now open `http://127.0.0.1:8000/` in your browser.
+You should be able to now open `http://localhost:8000/` in your browser.
+
+**A note on browser security**
+Make sure you use `localhost` for the host above due to browser security policies. Otherwise you will need to use `ngrok http 8000` to use the https forward address.
 
 ### Changing the rune to load
 
