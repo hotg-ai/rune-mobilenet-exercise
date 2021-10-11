@@ -38,6 +38,16 @@ Or
 
 You should be able to now open `http://127.0.0.1:8000/` in your browser.
 
+### Changing the rune to load
+
+To change the Rune in the frontend app change the `runeURL` variable in `index.html`.
+
+```
+    <script>
+        const runeURL = "./mobilenet.rune"; // Change this to './app.rune' to run your rune
+    ...
+```
+
 
 # Exercise to get confidences 
 
