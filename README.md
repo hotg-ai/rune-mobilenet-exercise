@@ -60,3 +60,11 @@ After:
       - label
       - most_confident_index
 ```
+
+
+You will see:
+
+```
+➜ docker run --platform linux/amd64 -v $(pwd):/app -w /app -v $(pwd)/cache:/cache -i -t tinyverseml/rune-cli /usr/local/bin/rune run app.rune --image sunglasses.png
+[{"type_name":"utf8","channel":2,"elements":["sunglass","sunglasses, dark glasses, shades","pick, plectrum, plectron"],"dimensions":[3]},{"type_name":"u32","channel":2,"elements":[837,838,715],"dimensions":[3]}]
+```
