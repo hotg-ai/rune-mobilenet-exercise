@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://rune-registry.web.app/vm/runevm.js"></script>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300ita‌​lic,400italic,500,500italic,700,700italic,900italic,900);
+
+        html,
+        body,
+        html * {
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            color: white;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .arrow {
+            font-size: 42px;
+        }
+
+        .spacer {
+            width: 140px;
+        }
+
+        body {
+            background-color: #201A56;
+        }
+
+        #logo {
+            width: 160px;
+        }
+
+        #log {
+            font-size: 12px;
+        }
+
+        .canvasses {
+            background-color: #0F0E22;
+            border-radius: 12px;
+            border: none;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 0px 0px;
+        }
+
+        .button {
+            background-color: #ED60E0;
+            border-radius: 12px;
+            border: none;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            width: 360px;
+        }
+
+        #capture {
+            width: 320px;
+            height: 320px;
+        }
+
+        #style {
+            width: 320px;
+        }
+
+        .loader {
+            border: 8px solid #f3f3f3;
+            /* Light grey */
+            border-top: 8px solid #ED60E0;
+            /* Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <table>
+        <tr>
+            <th>
+                <img src="https://hotg.ai/img/HOTG_white.png" id="logo" />
+            </th>
+            <th>
+                <div class="spacer"></div>
+            </th>
+            <th>
+                <div class="loader" id="loader"></div>
+            </th>
+        </tr>
+    </table>
+
+
+    <div id="rune">
+        <table>
+            <tr>
+                <th>
+                    <div class="canvasses">
+                        <div id="log"></div>
+                        <video id="video" width="320" height="320" autoplay></video>
+                        <div id="result"></div>
+
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <button class="button" onclick="runRune()">Capture</button>
+                </th>
+            </tr>
+
+        </table>
+    </div>
+    <br />
+    <script>
+        const runeURL = "./mobilenet_rune.rune";
+        var runtime;
+        let input;
+        let output;
+        //create capability and output classes
+        class ImageCapability {
+            parameters = {};
+            generate(dest, id) {
+                dest.set(input, 0);
+            }
+            setParameter(key, value) {
+                this.parameters[key] = value;
+            }
+        }
+
+        class SerialOutput {
+            consume(data) {
+                const utf8 = new TextDecoder();
+                output = JSON.parse(utf8.decode(data));
+            }
+        }
+        const imageCap = new ImageCapability();
+        const imports = {
+            createCapability: () => imageCap,
+            createOutput: () => new SerialOutput(),
+            createModel: (mime, model_data) => rune.TensorFlowModel.loadTensorFlowLite(model_data),
+            log: (log) => { console.log(log) },
+        };
+
+        async function loadRune() {
+            document.getElementById("loader").style.visibility = "visible";
+            const response = await fetch(runeURL);
+            const bytes = new Uint8Array(await response.arrayBuffer());
+            runtime = await rune.Runtime.load(bytes.buffer, imports);
+            document.getElementById("log").innerHTML = JSON.stringify(imageCap.parameters);
+            document.getElementById("rune").style.visibility = "visible";
+            document.getElementById("loader").style.visibility = "hidden";
+            startCamera();
+        }
+
+        async function runRune() {
+
+            //get input and resize
+            let video = document.getElementById("video");
+            input = rune.TensorFlowModel.resizeImage(video, 224);
+            runtime.call();
+
+
+            //get output and convert to image
+
+            const result = JSON.stringify(output.elements);
+            console.log(result);
+            document.getElementById('result').innerHTML = result;
+            document.getElementById("loader").style.visibility = "hidden";
+        }
+
+        //image and video functions
+        document.getElementById("rune").style.visibility = "hidden";
+
+        let video = document.getElementById("video");
+        let click_button = document.getElementById("click-photo");
+        let canvas = document.getElementById("capture");
+
+        async function startCamera() {
+            let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            video.setAttribute("playsinline", true);
+            video.srcObject = stream;
+
+        }
+
+        window.onload = function () {
+            loadRune();
+        };
+        document.getElementById("loader").style.visibility = "hidden";
+    </script>
+</body>
+
+</html>
