@@ -36,6 +36,8 @@ Or
 
 `python3 -m http.server` 
 
+You should be able to now open `http://127.0.0.1:8000/` in your browser.
+
 
 # Exercise to get confidences 
 
