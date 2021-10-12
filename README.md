@@ -5,8 +5,6 @@
 
 https://docs.docker.com/desktop/mac/install/
 
-In the zip file provided you will find an example Mobilenet Runefile, model and test image. Extract the zip file and cd into the folder. 
-
 ## Step 2: Run Rune build 
 
 Using the following command you can build the Mobilenet Rune. The initial run takes a bit of time as it is pulling in dependencies into your cache folder. Subsequent build jobs will be much faster. 
