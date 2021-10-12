@@ -1,9 +1,11 @@
 # Getting Started
 
 
-## ​​Step 1: Install Docker for Mac M1 
+## ​​Step 1.a: Install Docker for Mac M1 
 
 https://docs.docker.com/desktop/mac/install/
+
+### Clone this repo and cd into the cloned rune-mobilenet-exercise directory 
 
 ## Step 2: Run Rune build 
 
